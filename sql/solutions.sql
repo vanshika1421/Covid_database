@@ -623,3 +623,88 @@ GROUP BY
     c.population
 ORDER BY vaccination_percentage DESC
 LIMIT 3;
+
+/*
+============================================================
+STATE-WISE COVID QUERIES
+============================================================
+*/
+
+
+/*
+35. Total State-wise Confirmed Cases
+*/
+
+SELECT
+    s.name AS state,
+    SUM(cs.confirmed) AS total_confirmed_cases
+FROM covid_case_stats cs
+JOIN state s
+    ON cs.state_id = s.state_id
+GROUP BY s.name
+ORDER BY total_confirmed_cases DESC;
+
+
+/*
+36. Maximum Active cases State-wise till date
+*/
+
+SELECT
+    s.name AS state,
+    MAX(cs.active_cases) AS maximum_active_cases
+FROM covid_case_stats cs
+JOIN state s
+    ON cs.state_id = s.state_id
+GROUP BY s.name
+ORDER BY maximum_active_cases DESC;
+
+
+/*
+37. Max Per Day Confirmed cases in States
+*/
+
+SELECT
+    s.name AS state,
+    MAX(cs.new_confirmed) AS maximum_daily_confirmed_cases
+FROM covid_case_stats cs
+JOIN state s
+    ON cs.state_id = s.state_id
+GROUP BY s.name
+ORDER BY maximum_daily_confirmed_cases DESC;
+
+
+/*
+38. Max Per Day Death cases in States
+*/
+
+SELECT
+    s.name AS state,
+    MAX(cs.new_deaths) AS maximum_daily_deaths
+FROM covid_case_stats cs
+JOIN state s
+    ON cs.state_id = s.state_id
+GROUP BY s.name
+ORDER BY maximum_daily_deaths DESC;
+
+
+/*
+39. State-wise Mortality Rate
+*/
+
+SELECT
+    s.name AS state,
+    SUM(cs.confirmed) AS confirmed_cases,
+    SUM(cs.deaths) AS deaths,
+    ROUND(
+        (
+            SUM(cs.deaths) * 100.0
+            / NULLIF(SUM(cs.confirmed), 0)
+        )::NUMERIC,
+        2
+    ) AS mortality_rate
+FROM covid_case_stats cs
+JOIN state s
+    ON cs.state_id = s.state_id
+GROUP BY s.name
+ORDER BY mortality_rate DESC;
+
