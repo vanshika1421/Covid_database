@@ -122,3 +122,13 @@ WHERE cs.report_date = (
     FROM covid_case_stats
 )
 GROUP BY c.country_id, c.name, cs.report_date;
+
+--UC10
+SELECT 
+    c.name AS country,
+    SUM(cs.confirmed + cs.deaths + cs.recovered) AS total_cases
+FROM country c
+JOIN covid_case_stats cs
+    ON c.country_id = cs.country_id
+GROUP BY c.country_id, c.name
+ORDER BY total_cases DESC;
