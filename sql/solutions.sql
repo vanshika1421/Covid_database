@@ -219,3 +219,33 @@ Therefore, indexes should be created on columns that are frequently searched, fi
 --UC15
 CREATE INDEX idx_country_name
 ON country (name);
+
+--UC16
+CREATE OR REPLACE FUNCTION calculate_mortality_rate(p_country_name VARCHAR)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_deaths NUMERIC;
+    v_confirmed NUMERIC;
+BEGIN
+    SELECT
+        SUM(cs.deaths),
+        SUM(cs.confirmed)
+    INTO
+        v_deaths,
+        v_confirmed
+    FROM covid_case_stats cs
+    JOIN country c
+        ON cs.country_id = c.country_id
+    WHERE c.name = p_country_name;
+
+    IF v_confirmed IS NULL OR v_confirmed = 0 THEN
+        RETURN 0;
+    END IF;
+
+    RETURN (v_deaths / v_confirmed) * 100;
+END;
+$$;
+
+SELECT calculate_mortality_rate('India');
