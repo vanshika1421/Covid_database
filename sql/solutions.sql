@@ -54,3 +54,21 @@ WHERE cs.report_date = '2020-01-30'
 GROUP BY c.name
 ORDER BY maximum_active_cases DESC
 LIMIT 1;
+
+-- UC6
+CREATE OR REPLACE PROCEDURE get_total_recovered(
+    p_country_id INT,
+    p_date DATE,
+    OUT total_recovered INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    SELECT COALESCE(SUM(recovered), 0)
+    INTO total_recovered
+    FROM covid_case_stats
+    WHERE country_id = p_country_id
+      AND report_date = p_date;
+END;
+$$;
+CALL get_total_recovered(1, '2020-01-30', NULL);
