@@ -708,3 +708,51 @@ JOIN state s
 GROUP BY s.name
 ORDER BY mortality_rate DESC;
 
+
+/*
+40. Daily Mumbai COVID data
+*/
+
+SELECT
+    report_date,
+    SUM(new_confirmed) AS new_cases,
+    SUM(new_deaths) AS new_deaths,
+    SUM(active_cases) AS active_cases
+FROM mumbai_covid_waves
+GROUP BY report_date
+ORDER BY report_date;
+
+
+/*
+40. Mumbai 7-day moving average
+*/
+
+WITH daily_cases AS (
+    SELECT
+        report_date,
+        SUM(new_confirmed) AS new_cases
+    FROM mumbai_covid_waves
+    GROUP BY report_date
+),
+moving_average AS (
+    SELECT
+        report_date,
+        new_cases,
+        ROUND(
+            AVG(new_cases) OVER (
+                ORDER BY report_date
+                ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+            ),
+            2
+        ) AS seven_day_average
+    FROM daily_cases
+)
+SELECT
+    report_date,
+    new_cases,
+    seven_day_average
+FROM moving_average
+ORDER BY report_date;
+
+
+
