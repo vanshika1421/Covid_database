@@ -199,3 +199,19 @@ JOIN country c
     ON l.country_id = c.country_id
 ORDER BY l.active_cases DESC
 LIMIT 1;
+--UC14
+/*
+Indexes are used to speed up data retrieval from database tables. In the COVID dataset, tables such as covid_case_stats may contain a large number of records, so searching the entire table for every query can be slow.
+Indexes allow PostgreSQL to locate required rows more efficiently instead of performing a full table scan.
+For example, queries frequently filtering by report_date can benefit from an index:
+CREATE INDEX idx_covid_case_stats_report_date
+ON covid_case_stats(report_date);
+Similarly, indexes on columns used for JOINs, such as country_id and state_id, can improve join performance.
+Indexes are particularly useful for:
+- WHERE conditions, such as filtering by report_date
+- JOIN conditions, such as country_id and state_id
+- ORDER BY operations in suitable cases
+- Searching large datasets efficiently
+However, indexes also require additional storage and can make INSERT, UPDATE, and DELETE operations slightly more expensive because the indexes must also be maintained.
+Therefore, indexes should be created on columns that are frequently searched, filtered, joined, or sorted, rather than on every column.
+*/
