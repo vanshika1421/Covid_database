@@ -180,3 +180,22 @@ FROM country_data cd
 JOIN country c
     ON cd.country_id = c.country_id
 ORDER BY percentage_increase DESC;
+--UC13
+WITH latest_data AS (
+    SELECT
+        country_id,
+        active_cases
+    FROM global_covid_stats
+    WHERE report_date = (
+        SELECT MAX(report_date)
+        FROM global_covid_stats
+    )
+)
+SELECT
+    c.name AS country,
+    l.active_cases
+FROM latest_data l
+JOIN country c
+    ON l.country_id = c.country_id
+ORDER BY l.active_cases DESC
+LIMIT 1;
