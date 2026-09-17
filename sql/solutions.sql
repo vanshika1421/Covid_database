@@ -180,3 +180,9 @@ FROM country_data cd
 JOIN country c
     ON cd.country_id = c.country_id
 ORDER BY percentage_increase DESC;
+
+--UC14
+UC14 — Explain importance of indexes
+Theory/report answer:
+Indexes improve query performance by allowing PostgreSQL to find required rows more efficiently instead of scanning the entire table. In the COVID dataset, indexes can improve searches involving frequently used columns such as country_id and report_date. However, indexes require additional storage and can increase the cost of INSERT, UPDATE, and DELETE operations.
+No SQL required for UC14.
