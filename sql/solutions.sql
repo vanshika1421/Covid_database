@@ -249,3 +249,30 @@ END;
 $$;
 
 SELECT calculate_mortality_rate('India');
+
+--UC17
+CREATE OR REPLACE FUNCTION calculate_recovery_rate(p_date DATE)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_recovered NUMERIC;
+    v_confirmed NUMERIC;
+BEGIN
+    SELECT
+        SUM(cs.recovered),
+        SUM(cs.confirmed)
+    INTO
+        v_recovered,
+        v_confirmed
+    FROM covid_case_stats cs
+    WHERE cs.report_date = p_date;
+
+    IF v_confirmed IS NULL OR v_confirmed = 0 THEN
+        RETURN 0;
+    END IF;
+
+    RETURN (v_recovered / v_confirmed) * 100;
+END;
+$$;
+SELECT calculate_recovery_rate(DATE '2020-01-30');
