@@ -30,3 +30,14 @@ JOIN covid_case_stats cs
     ON c.country_id = cs.country_id
 GROUP BY c.continent
 ORDER BY c.continent;
+
+-- UC4 — Average new deaths per day across all countries
+SELECT 
+    AVG(daily_deaths) AS average_new_deaths_per_day
+FROM (
+    SELECT 
+        report_date,
+        SUM(new_deaths) AS daily_deaths
+    FROM covid_case_stats
+    GROUP BY report_date
+) AS daily_data;
