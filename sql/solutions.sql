@@ -132,3 +132,16 @@ JOIN covid_case_stats cs
     ON c.country_id = cs.country_id
 GROUP BY c.country_id, c.name
 ORDER BY total_cases DESC;
+
+
+--UC11
+SELECT 
+    c.name AS country,
+    SUM(cs.new_confirmed) AS total_new_cases
+FROM country c
+JOIN covid_case_stats cs
+    ON c.country_id = cs.country_id
+WHERE cs.report_date = '2020-01-30'
+GROUP BY c.country_id, c.name
+ORDER BY total_new_cases DESC
+LIMIT 1;
