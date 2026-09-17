@@ -298,3 +298,27 @@ GROUP BY
     report_date
 ORDER BY
     report_date;
+
+--UC20
+WITH daily_cases AS (
+    SELECT
+        c.name AS country,
+        cs.report_date,
+        cs.confirmed,
+        LAG(cs.confirmed) OVER (
+            PARTITION BY cs.country_id
+            ORDER BY cs.report_date
+        ) AS previous_confirmed
+    FROM covid_case_stats cs
+    JOIN country c
+        ON cs.country_id = c.country_id
+)
+SELECT
+    country,
+    AVG(confirmed - previous_confirmed) AS average_daily_new_cases
+FROM daily_cases
+WHERE previous_confirmed IS NOT NULL
+GROUP BY
+    country
+ORDER BY
+    country;
