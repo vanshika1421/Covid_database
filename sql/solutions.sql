@@ -105,3 +105,20 @@ GROUP BY c.country_id, c.name;
 
 SELECT * 
 FROM v_country_cases_specific_date;
+
+--UC9 — Latest data for each country
+CREATE OR REPLACE VIEW v_latest_country_data AS
+SELECT 
+    c.name AS country,
+    cs.report_date,
+    SUM(cs.confirmed) AS confirmed,
+    SUM(cs.deaths) AS deaths,
+    SUM(cs.recovered) AS recovered
+FROM country c
+JOIN covid_case_stats cs
+    ON c.country_id = cs.country_id
+WHERE cs.report_date = (
+    SELECT MAX(report_date)
+    FROM covid_case_stats
+)
+GROUP BY c.country_id, c.name, cs.report_date;
