@@ -41,3 +41,16 @@ FROM (
     FROM covid_case_stats
     GROUP BY report_date
 ) AS daily_data;
+
+
+-- UC5 — Maximum active cases in any country on a specific date
+SELECT 
+    c.name AS country,
+    MAX(cs.active_cases) AS maximum_active_cases
+FROM country c
+JOIN covid_case_stats cs
+    ON c.country_id = cs.country_id
+WHERE cs.report_date = '2020-01-30'
+GROUP BY c.name
+ORDER BY maximum_active_cases DESC
+LIMIT 1;
