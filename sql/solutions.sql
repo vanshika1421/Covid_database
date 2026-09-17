@@ -31,7 +31,7 @@ JOIN covid_case_stats cs
 GROUP BY c.continent
 ORDER BY c.continent;
 
--- UC4 — Average new deaths per day across all countries
+-- UC4 â€” Average new deaths per day across all countries
 SELECT 
     AVG(daily_deaths) AS average_new_deaths_per_day
 FROM (
@@ -43,7 +43,7 @@ FROM (
 ) AS daily_data;
 
 
--- UC5 — Maximum active cases in any country on a specific date
+-- UC5 â€” Maximum active cases in any country on a specific date
 SELECT 
     c.name AS country,
     MAX(cs.active_cases) AS maximum_active_cases
@@ -106,7 +106,7 @@ GROUP BY c.country_id, c.name;
 SELECT * 
 FROM v_country_cases_specific_date;
 
---UC9 — Latest data for each country
+--UC9 â€” Latest data for each country
 CREATE OR REPLACE VIEW v_latest_country_data AS
 SELECT 
     c.name AS country,
@@ -181,8 +181,29 @@ JOIN country c
     ON cd.country_id = c.country_id
 ORDER BY percentage_increase DESC;
 
+
+--UC13
+WITH latest_data AS (
+    SELECT
+        country_id,
+        active_cases
+    FROM global_covid_stats
+    WHERE report_date = (
+        SELECT MAX(report_date)
+        FROM global_covid_stats
+    )
+)
+SELECT
+    c.name AS country,
+    l.active_cases
+FROM latest_data l
+JOIN country c
+    ON l.country_id = c.country_id
+ORDER BY l.active_cases DESC
+LIMIT 1;
 --UC14
-UC14 — Explain importance of indexes
+UC14 â€” Explain importance of indexes
 Theory/report answer:
 Indexes improve query performance by allowing PostgreSQL to find required rows more efficiently instead of scanning the entire table. In the COVID dataset, indexes can improve searches involving frequently used columns such as country_id and report_date. However, indexes require additional storage and can increase the cost of INSERT, UPDATE, and DELETE operations.
 No SQL required for UC14.
+=======
