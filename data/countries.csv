@@ -1,0 +1,21 @@
+country_id,country_name,continent,population
+1,India,Asia,1380004385
+2,United States,North America,331002651
+3,Brazil,South America,212559417
+4,United Kingdom,Europe,67886011
+5,Russia,Europe,145934462
+6,France,Europe,65273511
+7,Turkey,Asia,84339067
+8,Argentina,South America,45195774
+9,Colombia,South America,50882891
+10,Italy,Europe,60461826
+11,Spain,Europe,46754778
+12,Germany,Europe,83783942
+13,South Africa,Africa,59308690
+14,Mexico,North America,128932753
+15,Indonesia,Asia,273523615
+16,Australia,Oceania,25499884
+17,Canada,North America,37742154
+18,Japan,Asia,126476461
+19,Nigeria,Africa,206139589
+20,Egypt,Africa,102334404
