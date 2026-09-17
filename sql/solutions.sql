@@ -322,3 +322,255 @@ GROUP BY
     country
 ORDER BY
     country;
+
+
+/*
+============================================================
+COVID-DATA-GLOBAL
+============================================================
+*/
+
+
+/*
+21. To find out the death percentage locally and globally.
+
+Global
+*/
+
+SELECT
+    ROUND(
+        (
+            SUM(deaths) * 100.0
+            / NULLIF(SUM(confirmed), 0)
+        )::NUMERIC,
+        2
+    ) AS global_death_percentage
+FROM global_covid_stats;
+
+
+/*
+21. Country-wise
+*/
+
+SELECT
+    c.name AS country,
+    ROUND(
+        (
+            MAX(g.deaths) * 100.0
+            / NULLIF(MAX(g.confirmed), 0)
+        )::NUMERIC,
+        2
+    ) AS death_percentage
+FROM global_covid_stats g
+JOIN country c
+    ON g.country_id = c.country_id
+GROUP BY c.name
+ORDER BY death_percentage DESC;
+
+
+/*
+22. To find out the infected population percentage locally
+    and globally.
+
+Global
+*/
+
+SELECT
+    ROUND(
+        (
+            SUM(g.confirmed) * 100.0
+            / NULLIF(SUM(c.population), 0)
+        )::NUMERIC,
+        2
+    ) AS global_infected_population_percentage
+FROM global_covid_stats g
+JOIN country c
+    ON g.country_id = c.country_id;
+
+
+/*
+22. Country-wise
+*/
+
+SELECT
+    c.name AS country,
+    ROUND(
+        (
+            MAX(g.confirmed) * 100.0
+            / NULLIF(MAX(c.population), 0)
+        )::NUMERIC,
+        2
+    ) AS death_percentage
+FROM global_covid_stats g
+JOIN country c
+    ON g.country_id = c.country_id
+GROUP BY c.name
+ORDER BY death_percentage DESC;
+
+
+/*
+23. To find out the countries with the highest infection rates
+*/
+
+SELECT
+    c.name AS country,
+    c.population,
+    MAX(g.confirmed) AS confirmed_cases,
+    ROUND(
+        (
+            MAX(g.confirmed) * 100.0
+            / NULLIF(c.population, 0)
+        )::NUMERIC,
+        2
+    ) AS infected_population_percentage
+FROM global_covid_stats g
+JOIN country c
+    ON g.country_id = c.country_id
+GROUP BY
+    c.name,
+    c.population
+ORDER BY infected_population_percentage DESC;
+
+
+/*
+24. To find out the countries and continents with the
+    highest death counts.
+
+The screenshot for this use case contains the same query
+shown for Use Case 23. It is kept unchanged for consistency
+with the submitted screenshots.
+*/
+
+SELECT
+    c.name AS country,
+    c.population,
+    MAX(g.confirmed) AS confirmed_cases,
+    ROUND(
+        (
+            MAX(g.confirmed) * 100.0
+            / NULLIF(c.population, 0)
+        )::NUMERIC,
+        2
+    ) AS infection_rate
+FROM global_covid_stats g
+JOIN country c
+    ON g.country_id = c.country_id
+GROUP BY
+    c.name,
+    c.population
+ORDER BY infection_rate DESC;
+
+
+/*
+25. Average number of deaths by day
+    (Continents and Countries)
+    [Hint: order by, group by clause]
+
+By Country
+*/
+
+SELECT
+    c.name AS country,
+    AVG(g.new_deaths) AS average_daily_deaths
+FROM global_covid_stats g
+JOIN country c
+    ON g.country_id = c.country_id
+GROUP BY c.name
+ORDER BY average_daily_deaths DESC;
+
+
+/*
+25. By Continent
+*/
+
+SELECT
+    c.continent,
+    AVG(g.new_deaths) AS average_daily_deaths
+FROM global_covid_stats g
+JOIN country c
+    ON g.country_id = c.country_id
+GROUP BY c.continent
+ORDER BY average_daily_deaths DESC;
+
+
+/*
+26. Average of cases divided by the number of population
+    of each country (TOP 10)
+    [Hint: Limit]
+*/
+
+SELECT
+    c.name AS country,
+    c.population,
+    AVG(g.confirmed) AS average_cases,
+    ROUND(
+        (
+            AVG(g.confirmed) * 100.0
+            / NULLIF(c.population, 0)
+        )::NUMERIC,
+        2
+    ) AS cases_population_percentage
+FROM global_covid_stats g
+JOIN country c
+    ON g.country_id = c.country_id
+GROUP BY
+    c.name,
+    c.population
+ORDER BY cases_population_percentage DESC
+LIMIT 10;
+
+
+/*
+27. Considering the highest value of total cases, which
+    countries have the highest rate of infection in relation
+    to population?
+    [Hint: Where clause]
+*/
+
+SELECT
+    c.name AS country,
+    c.population,
+    MAX(g.confirmed) AS total_cases,
+    ROUND(
+        (
+            MAX(g.confirmed) * 100.0
+            / NULLIF(c.population, 0)
+        )::NUMERIC,
+        2
+    ) AS infection_rate
+FROM global_covid_stats g
+JOIN country c
+    ON g.country_id = c.country_id
+GROUP BY
+    c.name,
+    c.population
+HAVING MAX(g.confirmed) > 0
+ORDER BY infection_rate DESC;
+
+
+/*
+28. Countries with the highest number of deaths
+*/
+
+SELECT
+    c.name AS country,
+    MAX(g.deaths) AS total_deaths
+FROM global_covid_stats g
+JOIN country c
+    ON g.country_id = c.country_id
+GROUP BY c.name
+ORDER BY total_deaths DESC;
+
+
+/*
+29. Continents with the highest number of deaths
+*/
+
+SELECT
+    c.continent,
+    SUM(g.deaths) AS total_deaths
+FROM global_covid_stats g
+JOIN country c
+ON g.country_id = c.country_id
+GROUP BY c.continent
+ORDER BY total_deaths DESC;
