@@ -287,3 +287,14 @@ GROUP BY
     c.continent
 ORDER BY
     c.continent;
+
+--UC19
+SELECT
+    report_date,
+    SUM(deaths) AS total_deaths,
+    SUM(recovered) AS total_recoveries
+FROM covid_case_stats
+GROUP BY
+    report_date
+ORDER BY
+    report_date;
