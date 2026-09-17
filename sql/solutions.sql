@@ -276,3 +276,14 @@ BEGIN
 END;
 $$;
 SELECT calculate_recovery_rate(DATE '2020-01-30');
+--UC18
+SELECT
+    c.continent,
+    SUM(cs.confirmed) AS total_confirmed_cases
+FROM covid_case_stats cs
+JOIN country c
+    ON cs.country_id = c.country_id
+GROUP BY
+    c.continent
+ORDER BY
+    c.continent;
