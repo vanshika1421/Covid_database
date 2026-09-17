@@ -215,3 +215,7 @@ Indexes are particularly useful for:
 However, indexes also require additional storage and can make INSERT, UPDATE, and DELETE operations slightly more expensive because the indexes must also be maintained.
 Therefore, indexes should be created on columns that are frequently searched, filtered, joined, or sorted, rather than on every column.
 */
+
+--UC15
+CREATE INDEX idx_country_name
+ON country (name);
