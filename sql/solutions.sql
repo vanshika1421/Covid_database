@@ -89,3 +89,19 @@ BEGIN
 END;
 $$;
 CALL update_deaths(1, '2020-01-30', 50);
+
+--UC8
+CREATE OR REPLACE VIEW v_country_cases_specific_date AS
+SELECT 
+    c.name AS country,
+    SUM(cs.confirmed) AS confirmed,
+    SUM(cs.deaths) AS deaths,
+    SUM(cs.recovered) AS recovered
+FROM country c
+JOIN covid_case_stats cs
+    ON c.country_id = cs.country_id
+WHERE cs.report_date = '2020-01-30'
+GROUP BY c.country_id, c.name;
+
+SELECT * 
+FROM v_country_cases_specific_date;
