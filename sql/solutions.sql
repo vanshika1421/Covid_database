@@ -145,3 +145,38 @@ WHERE cs.report_date = '2020-01-30'
 GROUP BY c.country_id, c.name
 ORDER BY total_new_cases DESC
 LIMIT 1;
+
+--UC12:
+WITH latest_dates AS (
+    SELECT DISTINCT report_date
+    FROM global_covid_stats
+    ORDER BY report_date DESC
+    LIMIT 2
+),
+country_data AS (
+    SELECT
+        country_id,
+        MAX(CASE
+            WHEN report_date = (SELECT MIN(report_date) FROM latest_dates)
+            THEN confirmed
+        END) AS previous_confirmed,
+        MAX(CASE
+            WHEN report_date = (SELECT MAX(report_date) FROM latest_dates)
+            THEN confirmed
+        END) AS latest_confirmed
+    FROM global_covid_stats
+    GROUP BY country_id
+)
+SELECT
+    c.name AS country,
+    previous_confirmed,
+    latest_confirmed,
+    ROUND(
+        ((latest_confirmed - previous_confirmed) * 100.0)
+        / NULLIF(previous_confirmed, 0),
+        2
+    ) AS percentage_increase
+FROM country_data cd
+JOIN country c
+    ON cd.country_id = c.country_id
+ORDER BY percentage_increase DESC;
